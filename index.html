@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Minimal Website</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: white;
+      color: black;
+      margin: 40px;
+      line-height: 1.5;
+    }
+    a { color: black; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .media { margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>Parallel</h1>
+
+  <div class="media">
+    <p>Audio 1</p>
+    <audio controls>
+      <source src="audio/track1.mp3" type="audio/mpeg">
+      Your browser does not support audio.
+    </audio>
+  </div>
+
+  <div class="media">
+    <p>Picture</p>
+    <img src="images/photo1.jpg" width="400">
+  </div>
+
+  <div class="media">
+    <p>Video (YouTube embed)</p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/XXXXX" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <footer>
+    <p>© 2025 Parallel</p>
+  </footer>
+</body>
+</html>
