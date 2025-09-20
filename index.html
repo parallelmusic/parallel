@@ -14,6 +14,10 @@
     a { color: black; text-decoration: none; }
     a:hover { text-decoration: underline; }
     .media { margin: 20px 0; }
+    audio {
+      width: 30%;
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
@@ -21,8 +25,8 @@
 
   <div class="media">
     <p>Audio 1</p>
-    <audio controls>
-      <source src="audio/track1.mp3" type="audio/mpeg">
+    <audio controls controlsList="nodownload">
+      <source src="https://docs.google.com/uc?export=download&id=1Wqa7k7Crq4iHSjZWmc1BoLMZNv0OzxIs" type="audio/wav">
       Your browser does not support audio.
     </audio>
   </div>
