@@ -2,45 +2,94 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Parallel</title>
-  <style>
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      background: white;
-      color: black;
-      margin: 40px;
-      line-height: 1.5;
-    }
-    a { color: black; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .media { margin: 20px 0; }
-    audio {
-      width: 30%;
-      margin: 10px 0;
-    }
+    <title>Parallel</title>
+  
+<style>
+  html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column; /* stack header, main, footer vertically */
+  min-height: 100vh;      /* full viewport height */
+  font-family: 'Courier New', Courier, monospace;
+  background: white;
+  color: black;
+  line-height: 1.5;
+  padding-top: 0;         /* remove previous padding-top */
+}
+
+/* Main content expands to fill space */
+main {
+  flex: 1;
+  padding: 40px;          /* adjust content spacing */
+}
+
+/* Footer styling */
+footer {
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+  padding: 15px 0;
+}
+
+/* Vertical floating menu */
+.vertical-menu {
+  position: fixed;       /* stays visible while scrolling */
+  top: 20px;             /* distance from top */
+  left: 20px;            /* distance from left */
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  border-radius: 5px;    /* optional rounded corners */
+}
+
+/* Each link on a separate line */
+.vertical-menu a {
+  display: block;        /* forces new line for each link */
+  text-decoration: none;
+  color: #000;
+  margin: 5px 0;
+  width: 120px;
+  text-align: center;         /* spacing between links */
+  transition: all 0.3s;
+  border-radius: 3px;
+}
+
+.vertical-menu a:hover {
+  color: #fff; /* text turns white on hover */
+  background-color: rgba(255, 127, 0, 0.7); /* orange with 70% opacity */
+}
+
+
+/* Optional: push content down so it doesn't hide under menu */
+body {
+  padding-top: 200px;     /* adjust depending on menu height */
+}
+
   </style>
 </head>
 <body>
-  <h1>Parallel</h1>
+  <header class="vertical-menu">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="audio.html">Audio</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
 
-  <div class="media">
-    <p>Audio 1</p>
-    <audio controls controlsList="nodownload">
-      <source src="https://docs.google.com/uc?export=download&id=1Wqa7k7Crq4iHSjZWmc1BoLMZNv0OzxIs" type="audio/wav">
-      Your browser does not support audio.
-    </audio>
-  </div>
+  <main>
+    <!-- Your page content goes here -->
+  </main>
 
-  <div class="media">
-    <p>Picture</p>
-    <img src="images/photo1.jpg" width="400">
-  </div>
-<!-- 
-  <div class="media">
-    <p>Video (YouTube embed)</p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/XXXXX" frameborder="0" allowfullscreen></iframe>
-  </div>
--->
+  <!-- <h1>Parallel</h1>> titolo del sito -->  
+
+  
   <footer>
     <p>© 2025 Parallel</p>
   </footer>
