@@ -43,7 +43,7 @@ footer {
   background: rgba(255, 255, 255, 0.9);
   padding: 10px;
   z-index: 1000;
-  font-family: Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
   border-radius: 5px;    /* optional rounded corners */
 }
@@ -62,30 +62,42 @@ footer {
 
 .vertical-menu a:hover {
   color: #fff; /* text turns white on hover */
-  background-color: rgba(255, 127, 0, 0.7); /* orange with 70% opacity */
+  background-color: rgba(0, 0, 0, 1); /* black with 70% opacity */
 }
 
 
 /* Optional: push content down so it doesn't hide under menu */
 body {
-  padding-top: 200px;     /* adjust depending on menu height */
+  padding-top: 450px;     /* adjust depending on menu height */
+}
+
+#ascii { 
+  margin-top: 50px; /* adjust to avoid overlapping fixed menu */ 
+  font-size: 10px;
+  line-height: 1;
+  white-space: pre;
+  display: inline-block; 
 }
 
   </style>
 </head>
+
+
+
 <body>
   <header class="vertical-menu">
     <nav>
       <a href="index.html">Home</a>
       <a href="audio.html">Audio</a>
-      <a href="about.html">About</a>
+      <a href="#" id="about-link">About</a>
       <a href="contact.html">Contact</a>
     </nav>
   </header>
 
   <main>
-    <!-- Your page content goes here -->
   </main>
+
+  <script src="js/bio.js"></script>
 
   <!-- <h1>Parallel</h1>> titolo del sito -->  
 
