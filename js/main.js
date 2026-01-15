@@ -398,3 +398,18 @@ window.addEventListener('load', positionPlayers);
 
 // Posiziona anche subito (nel caso il DOM sia già pronto)
 positionPlayers();
+
+// ===== TIME MACHINE EASTER EGG =====
+// Press "T" key to activate Time Machine archive
+document.addEventListener('keydown', (e) => {
+  // Only activate if user presses "T" (not in an input field)
+  if (e.key === 't' || e.key === 'T') {
+    // Don't activate if user is typing in an input/textarea
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      return;
+    }
+
+    // Navigate to archive page
+    window.location.href = 'archive.html';
+  }
+});
