@@ -149,10 +149,6 @@ function createPlayer(audioPath) {
   player.className = 'audio-player';
   player.id = 'audio-player-' + capsuleCounter;
 
-  // Posizionamento iniziale - sarà calcolato correttamente da positionPlayers
-  player.style.left = '50%';
-  player.style.transform = 'translateX(-50%)';
-
   const playPauseBtn = document.createElement('button');
   playPauseBtn.className = 'play-pause-btn';
   playPauseBtn.textContent = '▶';
@@ -370,16 +366,23 @@ function positionPlayers() {
 
     // Imposta il top e distribuisci i player orizzontalmente
     const players = document.querySelectorAll('.audio-player');
-    const spacing = 70; // Spazio tra i player
+
+    // Calcola la larghezza di un singolo player (usa il primo player come riferimento)
+    const playerWidth = players.length > 0 ? players[0].offsetWidth : 56;
+
+    // Spazio tra i player - aumentato per evitare sovrapposizioni
+    const spacing = playerWidth + 20; // 20px di gap tra le sfere
     const totalWidth = (players.length - 1) * spacing;
-    const startLeft = (window.innerWidth / 2) - (totalWidth / 2);
+
+    // Centro della finestra meno metà della larghezza del player per centrare il primo
+    const startLeft = (window.innerWidth / 2) - (totalWidth / 2) - (playerWidth / 2);
 
     players.forEach((player, index) => {
       // Imposta il top e left solo se il player non è stato trascinato
       if (!player.dataset.customPosition) {
         player.style.top = playersTop + 'px';
         player.style.left = (startLeft + (index * spacing)) + 'px';
-        player.style.transform = 'translateX(-50%)';
+        player.style.transform = 'none';
       }
     });
   }
