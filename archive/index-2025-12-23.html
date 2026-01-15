@@ -1,0 +1,829 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallel</title>
+  <link rel="icon" href="data:,">
+  
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Courier New', Courier, monospace;
+    background: #fafafa;
+    color: #1a1a1a;
+    line-height: 1.8;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+  }
+
+  footer {
+    background: transparent;
+    color: #999;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* Vertical Menu - Minimal */
+  .vertical-menu {
+    position: fixed;
+    top: 40px;
+    left: 40px;
+    padding: 0;
+    z-index: 1000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+  }
+
+  .vertical-menu nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vertical-menu a {
+    display: inline-block;
+    text-decoration: none;
+    color: #666;
+    margin: 0px 0;
+    padding: 4px 0;
+    text-align: left;
+    transition: all 0.4s ease;
+    border-bottom: 1px solid transparent;
+    letter-spacing: 0.5px;
+  }
+
+  .vertical-menu a:hover {
+    color: #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  /* About section that appears */
+  .about-text {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    margin-top: 0;
+    margin-bottom: 0;
+    opacity: 0;
+  }
+
+  .about-text.show {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    transition: max-height 0.5s ease, opacity 0.5s ease, margin 0.5s ease;
+  }
+
+  .about-text p {
+    font-size: 11px;
+    line-height: 1.6;
+    color: #666;
+    margin: 0;
+    max-width: 200px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Typewriter effect */
+  .typewriter {
+    overflow: hidden;
+    border-right: 2px solid #666;
+    white-space: normal;
+  }
+
+  .typewriter.typing {
+    animation: blink-caret 0.75s step-end infinite;
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #666; }
+  }
+
+  .typewriter.done {
+    border-right: none;
+  }
+
+  /* Main Container */
+  .knob-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .knob-container.sold-out {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Knob Circle */
+  .knob {
+    width: 180px;
+    height: 180px;
+    background: #fafafa;
+    border: none;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(300deg);
+    transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .knob:hover .text-circle {
+    letter-spacing: 1px;
+  }
+
+  .knob:active {
+    transform: translate(-50%, -50%) rotate(300deg) scale(0.99);
+  }
+
+  /* Circular text */
+  .text-circle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: rotateText 20s linear infinite;
+    transition: letter-spacing 0.3s ease;
+  }
+
+  .text-circle text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    letter-spacing: 3px;
+    fill: #1a1a1a;
+  }
+
+  @keyframes rotateText {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Knob handle */
+  .knob-handle {
+    width: 0.5px;
+    height: 130px;
+    background: #1a1a1a;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Direction arrow */
+  .direction-arrow {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .direction-arrow svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Knob turning animation */
+  .knob.turning {
+    animation: turnKnob 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  @keyframes turnKnob {
+    0% { transform: translate(-50%, -50%) rotate(300deg); }
+    100% { transform: translate(-50%, -50%) rotate(660deg); }
+  }
+
+  /* Singolo player audio - PALETTE MINIMALISTA DEL SITO */
+  .audio-player {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px;
+    opacity: 0;
+    transition: opacity 0.6s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    cursor: grab;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    box-shadow: 
+      0 2px 4px rgba(0,0,0,0.08),
+      0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  .audio-player:hover {
+    box-shadow: 
+      0 4px 8px rgba(0,0,0,0.12),
+      0 2px 4px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+    border-color: #ccc;
+  }
+
+  .audio-player.dragging {
+    cursor: grabbing;
+    box-shadow: 
+      0 8px 16px rgba(0,0,0,0.16),
+      0 4px 8px rgba(0,0,0,0.12);
+    z-index: 1002;
+    transform: scale(1.02);
+    border-color: #1a1a1a;
+  }
+
+  .audio-player.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Bottone play/pause - STILE MINIMALISTA */
+  .play-pause-btn {
+    width: clamp(28px, 5vw, 48px);
+    height: clamp(28px, 5vw, 48px);
+    border: 1px solid #1a1a1a;
+    background: #fafafa;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: clamp(10px, 2vw, 16px);
+    padding: 0;
+    padding-left: 2px;
+    line-height: 1;
+    color: #1a1a1a;
+    box-shadow: 
+      0 2px 4px rgba(0,0,0,0.08),
+      0 1px 2px rgba(0,0,0,0.04);
+    position: relative;
+    z-index: 10;
+  }
+
+  .play-pause-btn:hover {
+    background: #1a1a1a;
+    color: #fafafa;
+    box-shadow: 
+      0 3px 6px rgba(0,0,0,0.12),
+      0 2px 4px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+
+  .play-pause-btn:active {
+    transform: translateY(0px) scale(0.98);
+    box-shadow: 
+      0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* Status Message */
+  .status {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    text-align: center;
+    font-size: clamp(10px, 2vw, 16px);
+    min-height: 15px;
+    opacity: 0;
+    transition: all 0.6s ease;
+    letter-spacing: 2px;
+    color: #666;
+    z-index: 998;
+  }
+
+  .status.show {
+    opacity: 1;
+  }
+
+  .status.error {
+    color: #ff0000;
+    font-size: 14px;
+    letter-spacing: 3px;
+    cursor: default;
+  }
+
+  /* Instruction text */
+  .instruction {
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    font-size: clamp(10px, 1.5vw, 14px);
+    opacity: 0;
+    letter-spacing: 3px;
+    color: #292929;
+    animation: fadeInOut 3s ease-in-out infinite;
+    z-index: 999;
+    white-space: nowrap;
+    padding: 0;
+    margin: 0;
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.8; }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    main {
+      padding: 20px;
+      padding-top: 80px;
+    }
+
+    .knob-container {
+      width: 200px;
+      height: 200px;
+    }
+
+    .knob {
+      width: 140px;
+      height: 140px;
+    }
+
+    .knob-handle {
+      height: 100px;
+    }
+
+    .direction-arrow {
+      width: 170px;
+      height: 170px;
+    }
+
+    .vertical-menu {
+      top: 20px;
+      left: 20px;
+      font-size: 11px;
+    }
+
+    .vertical-menu a {
+      margin: 8px 0;
+      font-size: 11px;
+    }
+
+    .about-text p {
+      max-width: 180px;
+      font-size: 10px;
+    }
+
+    .instruction {
+      font-size: 11px;
+    }
+
+    .status {
+      font-size: 9px;
+    }
+
+    footer {
+      font-size: 9px;
+    }
+
+    .text-circle text {
+      font-size: 12px;
+    }
+
+    .play-pause-btn {
+      width: clamp(25px, 4vw, 36px);
+      height: clamp(25px, 4vw, 36px);
+      font-size: clamp(9px, 1.8vw, 13px);
+    }
+  }
+</style>
+</head>
+
+<body>
+  <header class="vertical-menu">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#" id="about-link">About</a>
+      <div class="about-text" id="about-text">
+        <p class="typewriter" id="typewriter"></p>
+      </div>
+      <a href="mailto:info@byparallel.art">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <div>
+      <div class="knob-container" id="knob-container">
+        <div class="direction-arrow">
+          <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 110 30 A 65 65 0 1 1 45 110" stroke="#1a1a1a" stroke-width="0.5" fill="none" stroke-linecap="round" opacity="0.15"></path>
+            <path d="M 45 110 L 42 105 L 40 112 Z" fill="#1a1a1a" opacity="0.15"></path>
+          </svg>
+        </div>
+        <div class="knob" id="knob">
+          <svg class="text-circle" viewBox="0 0 200 200">
+            <defs>
+              <path id="circlePath" d="M 100, 100 m -85, 0 a 85,85 0 1,1 170,0 a 85,85 0 1,1 -170,0"></path>
+            </defs>
+            <text>
+              <textPath href="#circlePath" startOffset="0%">
+                ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・
+              </textPath>
+            </text>
+          </svg>
+          <div class="knob-handle"></div>
+        </div>
+      </div>
+      <div class="instruction">回す</div>
+      <div class="status" id="status"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 PARALLEL</p>
+  </footer>
+
+  <script>
+    // TUTTI GLI AUDIO DISPONIBILI
+    const allAudioSamples = [
+      'audio/251004-shinjuku-gachaponshop-ambience.mp3',
+      'audio/251004-shinjuku-gachaponshop-coins.mp3',
+      'audio/251004-shinjuku-gachaponshop-guitarjingle.mp3',
+      'audio/251004-shinjuku-gachaponshop-playing.mp3',
+    ];
+  
+    // Array degli audio non ancora estratti
+    let availableAudios = [...allAudioSamples];
+    
+    const knobContainer = document.getElementById('knob-container');
+    const knob = document.getElementById('knob');
+    const textCircle = document.querySelector('.text-circle');
+    const status = document.getElementById('status');
+    const instruction = document.querySelector('.instruction');
+    
+    let capsules = [];
+    let instructionToggle = true;
+    let isSoldOut = false;
+    let capsuleCounter = 0;
+  
+    // Automatically alternate instruction text every 3 seconds
+    setInterval(() => {
+      if (!isSoldOut) {
+        instructionToggle = !instructionToggle;
+        instruction.textContent = instructionToggle ? '回す' : 'rotate';
+      }
+    }, 3000);
+  
+    // About section toggle with typewriter effect
+    const aboutLink = document.getElementById('about-link');
+    const aboutText = document.getElementById('about-text');
+    const typewriter = document.getElementById('typewriter');
+    const fullText = 'This site is constantly evolving, so feel free to visit it regularly. Created by Francesco De Grazia and Arielle Krebs.';
+    let aboutOpen = false;
+  
+    function typeWriterEffect(text, element, speed = 50) {
+      let i = 0;
+      element.textContent = '';
+      element.classList.add('typing');
+      
+      function type() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else {
+          element.classList.remove('typing');
+          element.classList.add('done');
+        }
+      }
+      type();
+    }
+  
+    aboutLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      if (!aboutOpen) {
+        aboutText.classList.add('show');
+        setTimeout(() => {
+          typeWriterEffect(fullText, typewriter);
+        }, 100);
+        aboutOpen = true;
+      } else {
+        aboutText.classList.remove('show');
+        typewriter.classList.remove('done', 'typing');
+        typewriter.textContent = '';
+        aboutOpen = false;
+      }
+    });
+  
+    // Click on knob - ESTRAE NUOVO AUDIO RANDOM
+    knobContainer.addEventListener('click', function(e) {
+      if (isSoldOut) {
+        return;
+      }
+      
+      // Animazione knob
+      if (!knob.classList.contains('turning')) {
+        textCircle.style.animationPlayState = 'paused';
+        
+        knob.classList.add('turning');
+        setTimeout(() => {
+          knob.classList.remove('turning');
+          knob.style.transform = 'translate(-50%, -50%) rotate(300deg)';
+          textCircle.style.animationPlayState = 'running';
+        }, 1200);
+      }
+      
+      // Dopo l'animazione, estrae un audio random
+      setTimeout(() => {
+        extractRandomAudio();
+      }, 600);
+    });
+  
+    function extractRandomAudio() {
+      if (availableAudios.length === 0) {
+        isSoldOut = true;
+        knobContainer.classList.add('sold-out');
+        status.textContent = 'SOLD OUT';
+        status.classList.add('show', 'error');
+        instruction.textContent = '';
+        instruction.style.animation = 'none';
+        return;
+      }
+      
+      const randomIndex = Math.floor(Math.random() * availableAudios.length);
+      const selectedAudio = availableAudios[randomIndex];
+      
+      availableAudios.splice(randomIndex, 1);
+      
+      createPlayer(selectedAudio);
+    }
+  
+    function createPlayer(audioPath) {
+      capsuleCounter++;
+      
+      const audio = new Audio(audioPath);
+      audio.loop = true;
+      
+      const fileName = audioPath.split('/').pop().replace('.mp3', '').replace(/-/g, ' ');
+      
+      const audioData = {
+        audio: audio,
+        id: capsuleCounter,
+        fileName: fileName
+      };
+      
+      capsules.push(audioData);
+      
+      const player = document.createElement('div');
+      player.className = 'audio-player';
+      player.id = 'audio-player-' + capsuleCounter;
+      
+      // Posizionamento iniziale
+      player.style.left = '50%';
+      player.style.transform = 'translateX(-50%)';
+      
+      const playPauseBtn = document.createElement('button');
+      playPauseBtn.className = 'play-pause-btn';
+      playPauseBtn.textContent = '▶';
+      playPauseBtn.setAttribute('aria-label', 'Play/Pause ' + fileName);
+      
+      player.appendChild(playPauseBtn);
+      document.body.appendChild(player);
+      
+      setTimeout(() => {
+        player.classList.add('show');
+        positionPlayers();
+      }, 800);
+      
+      // Event listeners audio
+      audio.addEventListener('playing', () => {
+        playPauseBtn.textContent = '⏸';
+      });
+      
+      audio.addEventListener('pause', () => {
+        playPauseBtn.textContent = '▶';
+      });
+      
+      audio.addEventListener('error', (e) => {
+        console.error('Audio file not found:', e);
+      });
+      
+      // Play/Pause button
+      playPauseBtn.onclick = function(e) {
+        e.stopPropagation();
+        if (audio.paused) {
+          audio.play().catch(err => {
+            console.error('Play failed:', err);
+          });
+        } else {
+          audio.pause();
+        }
+      };
+      
+      // Avvia audio automaticamente
+      setTimeout(() => {
+        audio.play().catch(err => {
+          // Silent fail
+        });
+      }, 1000);
+      
+      makeDraggable(player);
+    }
+    
+    function makeDraggable(element) {
+      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      let isDragging = false;
+      let hasMoved = false;
+      let startX = 0, startY = 0;
+      const MOVE_THRESHOLD = 5;
+      
+      const playPauseBtn = element.querySelector('.play-pause-btn');
+      
+      element.addEventListener('mousedown', dragMouseDown);
+      element.addEventListener('touchstart', dragTouchStart, { passive: false });
+      
+      function dragMouseDown(e) {
+        if (e.target === playPauseBtn) {
+          return;
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        isDragging = true;
+        hasMoved = false;
+        
+        startX = e.clientX;
+        startY = e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        
+        document.addEventListener('mouseup', closeDragElement);
+        document.addEventListener('mousemove', elementDrag);
+      }
+      
+      function dragTouchStart(e) {
+        if (e.target === playPauseBtn) {
+          return;
+        }
+        
+        e.preventDefault();
+        isDragging = true;
+        hasMoved = false;
+        
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        pos3 = touch.clientX;
+        pos4 = touch.clientY;
+        
+        document.addEventListener('touchend', closeDragElement);
+        document.addEventListener('touchmove', elementDragTouch, { passive: false });
+      }
+      
+      function elementDrag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        const deltaX = Math.abs(e.clientX - startX);
+        const deltaY = Math.abs(e.clientY - startY);
+        
+        if (deltaX > MOVE_THRESHOLD || deltaY > MOVE_THRESHOLD) {
+          hasMoved = true;
+          element.classList.add('dragging');
+          
+          element.dataset.customPosition = 'true';
+          
+          if (element.style.transform === 'translateX(-50%)') {
+            const rect = element.getBoundingClientRect();
+            element.style.left = (rect.left + window.scrollX + rect.width / 2) + 'px';
+          }
+          element.style.transform = 'none';
+          
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          
+          element.style.top = (element.offsetTop - pos2) + "px";
+          element.style.left = (element.offsetLeft - pos1) + "px";
+        }
+      }
+      
+      function elementDragTouch(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        const touch = e.touches[0];
+        const deltaX = Math.abs(touch.clientX - startX);
+        const deltaY = Math.abs(touch.clientY - startY);
+        
+        if (deltaX > MOVE_THRESHOLD || deltaY > MOVE_THRESHOLD) {
+          hasMoved = true;
+          element.classList.add('dragging');
+          
+          element.dataset.customPosition = 'true';
+          
+          if (element.style.transform === 'translateX(-50%)') {
+            const rect = element.getBoundingClientRect();
+            element.style.left = (rect.left + window.scrollX + rect.width / 2) + 'px';
+          }
+          element.style.transform = 'none';
+          
+          pos1 = pos3 - touch.clientX;
+          pos2 = pos4 - touch.clientY;
+          pos3 = touch.clientX;
+          pos4 = touch.clientY;
+          
+          element.style.top = (element.offsetTop - pos2) + "px";
+          element.style.left = (element.offsetLeft - pos1) + "px";
+        }
+      }
+      
+      function closeDragElement(e) {
+        isDragging = false;
+        element.classList.remove('dragging');
+        
+        if (!hasMoved && playPauseBtn) {
+          playPauseBtn.click();
+        }
+        
+        hasMoved = false;
+        document.removeEventListener('mouseup', closeDragElement);
+        document.removeEventListener('mousemove', elementDrag);
+        document.removeEventListener('touchend', closeDragElement);
+        document.removeEventListener('touchmove', elementDragTouch);
+      }
+    }
+
+    function positionPlayers() {
+      const knobContainer = document.getElementById('knob-container');
+      const instruction = document.querySelector('.instruction');
+      const status = document.getElementById('status');
+      
+      if (knobContainer) {
+        const knobRect = knobContainer.getBoundingClientRect();
+        const knobBottom = knobRect.bottom + window.scrollY;
+        
+        const minGap = window.innerHeight < 700 ? 40 : 30;
+        const maxGap = 80;
+        const baseGap = clamp(minGap, window.innerHeight * 0.08, maxGap);
+        
+        const playerGap = baseGap * 1.5;
+        const playersTop = knobBottom + playerGap;
+        
+        const instructionTop = knobBottom + (baseGap * 0.5);
+        
+        if (instruction) {
+          instruction.style.top = instructionTop + 'px';
+        }
+        
+        if (status) {
+          status.style.top = instructionTop + 'px';
+        }
+        
+        const players = document.querySelectorAll('.audio-player');
+        const spacing = 70;
+        const totalWidth = (players.length - 1) * spacing;
+        const startLeft = (window.innerWidth / 2) - (totalWidth / 2);
+        
+        players.forEach((player, index) => {
+          if (!player.dataset.customPosition) {
+            player.style.top = playersTop + 'px';
+            player.style.left = (startLeft + (index * spacing)) + 'px';
+            player.style.transform = 'translateX(-50%)';
+          }
+        });
+      }
+    }
+
+    function clamp(min, val, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    window.addEventListener('resize', positionPlayers);
+    window.addEventListener('load', positionPlayers);
+  </script>
+
+</body></html>

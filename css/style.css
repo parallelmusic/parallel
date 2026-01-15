@@ -1,0 +1,448 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Courier New', Courier, monospace;
+  background: #fafafa;
+  color: #1a1a1a;
+  line-height: 1.8;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+}
+
+footer {
+  background: transparent;
+  color: #999;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+/* Vertical Menu - Minimal */
+.vertical-menu {
+  position: fixed;
+  top: 40px;
+  left: 40px;
+  padding: 0;
+  z-index: 1000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+}
+
+.vertical-menu nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.vertical-menu a {
+  display: inline-block;
+  text-decoration: none;
+  color: #666;
+  margin: 0px 0;
+  padding: 4px 0;
+  text-align: left;
+  transition: all 0.4s ease;
+  border-bottom: 1px solid transparent;
+  letter-spacing: 0.5px;
+}
+
+.vertical-menu a:hover {
+  color: #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* About section that appears */
+.about-text {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  margin-top: 0;
+  margin-bottom: 0;
+  opacity: 0;
+}
+
+.about-text.show {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  transition: max-height 0.5s ease, opacity 0.5s ease, margin 0.5s ease;
+}
+
+.about-text p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #666;
+  margin: 0;
+  max-width: 200px;
+  letter-spacing: 0.3px;
+}
+
+/* Typewriter effect */
+.typewriter {
+  overflow: hidden;
+  border-right: 2px solid #666;
+  white-space: normal;
+}
+
+.typewriter.typing {
+  animation: blink-caret 0.75s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: #666; }
+}
+
+.typewriter.done {
+  border-right: none;
+}
+
+/* Main Container */
+.knob-container {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.3s ease;
+}
+
+.knob-container.sold-out {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Knob Circle */
+.knob {
+  width: 180px;
+  height: 180px;
+  background: #fafafa;
+  border: none;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(300deg);
+  transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.knob:hover .text-circle {
+  letter-spacing: 1px;
+}
+
+.knob:active {
+  transform: translate(-50%, -50%) rotate(300deg) scale(0.99);
+}
+
+/* Circular text */
+.text-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: rotateText 20s linear infinite;
+  transition: letter-spacing 0.3s ease;
+}
+
+.text-circle text {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  letter-spacing: 3px;
+  fill: #1a1a1a;
+}
+
+@keyframes rotateText {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Knob handle */
+.knob-handle {
+  width: 0.5px;
+  height: 130px;
+  background: #1a1a1a;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Direction arrow */
+.direction-arrow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.direction-arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Knob turning animation */
+.knob.turning {
+  animation: turnKnob 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@keyframes turnKnob {
+  0% { transform: translate(-50%, -50%) rotate(300deg); }
+  100% { transform: translate(-50%, -50%) rotate(660deg); }
+}
+
+/* Container per tutti i player audio - ora solo un riferimento */
+.audio-players-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Singolo player audio - PALETTE MINIMALISTA DEL SITO */
+.audio-player {
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 12px;
+  opacity: 0;
+  transition: opacity 0.6s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  position: absolute;
+  cursor: grab;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.08),
+    0 1px 2px rgba(0,0,0,0.04);
+}
+
+.audio-player:hover {
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.12),
+    0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+  border-color: #ccc;
+}
+
+.audio-player.dragging {
+  cursor: grabbing;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,0.16),
+    0 4px 8px rgba(0,0,0,0.12);
+  z-index: 1002;
+  transform: scale(1.02);
+  border-color: #1a1a1a;
+}
+
+.audio-player.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Bottone play/pause - STILE MINIMALISTA */
+.play-pause-btn {
+  width: clamp(28px, 5vw, 48px);
+  height: clamp(28px, 5vw, 48px);
+  border: 1px solid #1a1a1a;
+  background: #fafafa;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: clamp(10px, 2vw, 16px);
+  padding: 0;
+  padding-left: 2px;
+  line-height: 1;
+  color: #1a1a1a;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.08),
+    0 1px 2px rgba(0,0,0,0.04);
+  position: relative;
+  z-index: 10;
+}
+
+.play-pause-btn:hover {
+  background: #1a1a1a;
+  color: #fafafa;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.12),
+    0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.play-pause-btn:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.08);
+}
+
+
+/* Status Message */
+.status {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;  /* Calcolato dinamicamente con JavaScript */
+  text-align: center;
+  font-size: clamp(10px, 2vw, 16px);
+  min-height: 15px;
+  opacity: 0;
+  transition: all 0.6s ease;
+  letter-spacing: 2px;
+  color: #666;
+  z-index: 998;
+}
+
+.status.show {
+  opacity: 1;
+}
+
+.status.error {
+  color: #ff0000;
+  font-size: 14px;
+  letter-spacing: 3px;
+  cursor: default;
+}
+
+/* Instruction text */
+.instruction {
+  position: absolute;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;  /* Calcolato dinamicamente con JavaScript */
+  font-size: clamp(10px, 1.5vw, 14px);
+  opacity: 0;
+  letter-spacing: 3px;
+  color: #292929;
+  animation: fadeInOut 3s ease-in-out infinite;
+  z-index: 999;
+  white-space: nowrap;
+  padding: 0;
+  margin: 0;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.8; }
+}
+
+/* Subtle grid background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(0, 0, 0, 0.02) 25%, rgba(0, 0, 0, 0.02) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.02) 75%, rgba(0, 0, 0, 0.02) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(0, 0, 0, 0.02) 25%, rgba(0, 0, 0, 0.02) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.02) 75%, rgba(0, 0, 0, 0.02) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  main {
+    padding: 20px;
+    padding-top: 80px;
+  }
+
+  .knob-container {
+    width: 200px;
+    height: 200px;
+  }
+
+  .knob {
+    width: 140px;
+    height: 140px;
+  }
+
+  .knob-handle {
+    height: 100px;
+  }
+
+  .direction-arrow {
+    width: 170px;
+    height: 170px;
+  }
+
+  .vertical-menu {
+    top: 20px;
+    left: 20px;
+    font-size: 11px;
+  }
+
+  .vertical-menu a {
+    margin: 8px 0;
+    font-size: 11px;
+  }
+
+  .about-text p {
+    max-width: 180px;
+    font-size: 10px;
+  }
+
+  .instruction {
+    margin-top: 30px;
+    font-size: 11px;
+  }
+
+  .status {
+    margin-top: 40px;
+    font-size: 9px;
+  }
+
+  footer {
+    font-size: 9px;
+  }
+
+  .text-circle text {
+    font-size: 12px;
+  }
+
+  .audio-players-container {
+    bottom: clamp(40px, 8vh, 70px);
+    gap: clamp(8px, 2vw, 15px);
+  }
+
+  .play-pause-btn {
+    width: clamp(25px, 4vw, 36px);
+    height: clamp(25px, 4vw, 36px);
+    font-size: clamp(9px, 1.8vw, 13px);
+  }
+}
