@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallel</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header class="vertical-menu">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#" id="about-link">About</a>
+      <div class="about-text" id="about-text">
+        <p class="typewriter" id="typewriter"></p>
+      </div>
+      <a href="mailto:info@byparallel.art">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <div>
+      <div class="knob-container" id="knob-container">
+        <div class="direction-arrow">
+          <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 110 30 A 65 65 0 1 1 45 110" stroke="#1a1a1a" stroke-width="0.5" fill="none" stroke-linecap="round" opacity="0.15"/>
+            <path d="M 45 110 L 42 105 L 40 112 Z" fill="#1a1a1a" opacity="0.15"/>
+          </svg>
+        </div>
+        <div class="knob" id="knob">
+          <svg class="text-circle" viewBox="0 0 200 200">
+            <defs>
+              <path id="circlePath" d="M 100, 100 m -85, 0 a 85,85 0 1,1 170,0 a 85,85 0 1,1 -170,0"/>
+            </defs>
+            <text>
+              <textPath href="#circlePath" startOffset="0%">
+                ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・ガチャ・
+              </textPath>
+            </text>
+          </svg>
+          <div class="knob-handle"></div>
+        </div>
+      </div>
+      <div class="instruction">回す</div>
+      <div class="status" id="status"></div>
+      
+      <!-- Container per tutti i player audio -->
+      <div class="audio-players-container" id="audio-players-container"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 PARALLEL</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
