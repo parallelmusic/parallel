@@ -135,7 +135,7 @@ footer {
 .knob {
   width: 180px;
   height: 180px;
-  background: #fafafa;
+  background: #faf8f4;
   border: none;
   border-radius: 50%;
   position: absolute;
@@ -163,6 +163,7 @@ footer {
   height: 100%;
   animation: rotateText 20s linear infinite;
   transition: letter-spacing 0.3s ease;
+  background: transparent;
 }
 
 .text-circle text {
@@ -268,6 +269,7 @@ footer {
   height: 100%;
   animation: rotateText 15s linear infinite;
   transition: letter-spacing 0.3s ease;
+  background: transparent;
 }
 
 .capsule-text-circle text {

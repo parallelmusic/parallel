@@ -189,11 +189,15 @@ function createPlayer(audioPath) {
   // Event listeners audio
   audio.addEventListener('playing', () => {
     playPauseBtn.textContent = '⏸';
+    // Resume rotation when playing
+    svg.style.animationPlayState = 'running';
     console.log('▶️ Audio playing:', fileName);
   });
 
   audio.addEventListener('pause', () => {
     playPauseBtn.textContent = '▶';
+    // Pause rotation when paused
+    svg.style.animationPlayState = 'paused';
     console.log('⏸️ Audio paused:', fileName);
   });
 
