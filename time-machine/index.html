@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallel - Time Machine</title>
+  <link rel="icon" href="data:,">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: #faf8f4;
+      color: #1a1a1a;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Preview frame */
+    .preview-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 120px);
+    }
+
+    .preview-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .preview-container iframe.loaded {
+      opacity: 1;
+    }
+
+    /* Time Machine bar at bottom */
+    .time-machine-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #faf8f4;
+      border-top: 1px solid #e0e0e0;
+      padding: 15px 30px 20px;
+      z-index: 1000;
+    }
+
+    .bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .title-section {
+      display: flex;
+      align-items: baseline;
+      gap: 15px;
+    }
+
+    .archive-title {
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: normal;
+    }
+
+    .dev-notice {
+      font-size: 9px;
+      color: #999;
+      letter-spacing: 0.5px;
+    }
+
+    .close-btn {
+      background: none;
+      border: 1px solid #1a1a1a;
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: #1a1a1a;
+      color: #faf8f4;
+    }
+
+    .bar-content {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .version-info {
+      min-width: 150px;
+    }
+
+    .current-date {
+      font-size: 14px;
+      letter-spacing: 1px;
+      display: block;
+    }
+
+    .version-title {
+      font-size: 10px;
+      color: #666;
+      letter-spacing: 0.5px;
+    }
+
+    /* Timeline slider */
+    .timeline-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .timeline-slider {
+      width: 100%;
+      height: 2px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #ddd;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .timeline-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .timeline-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #999;
+      letter-spacing: 0.5px;
+    }
+
+    .timeline-label {
+      cursor: pointer;
+      padding: 2px 4px;
+      transition: color 0.2s ease;
+    }
+
+    .timeline-label:hover,
+    .timeline-label.active {
+      color: #1a1a1a;
+    }
+
+    .controls {
+      min-width: 150px;
+      text-align: right;
+    }
+
+    .keyboard-hint {
+      font-size: 9px;
+      color: #999;
+      letter-spacing: 0.5px;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .time-machine-bar {
+        padding: 12px 15px 15px;
+      }
+
+      .bar-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .dev-notice {
+        display: none;
+      }
+
+      .bar-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+      }
+
+      .version-info,
+      .controls {
+        min-width: auto;
+        text-align: center;
+      }
+
+      .preview-container {
+        height: calc(100% - 180px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Preview frame -->
+  <div class="preview-container">
+    <iframe id="version-preview" src=""></iframe>
+  </div>
+
+  <!-- Time Machine bar at bottom -->
+  <div class="time-machine-bar">
+    <div class="bar-header">
+      <div class="title-section">
+        <span class="archive-title">Time Machine</span>
+        <span class="dev-notice">(This feature is currently being developed)</span>
+      </div>
+      <button class="close-btn" id="return-btn">Go Back to Present</button>
+    </div>
+
+    <div class="bar-content">
+      <div class="version-info">
+        <span class="current-date" id="current-date">Loading...</span>
+        <span class="version-title" id="version-title"></span>
+      </div>
+
+      <div class="timeline-container">
+        <input
+          type="range"
+          class="timeline-slider"
+          id="timeline-slider"
+          min="0"
+          max="0"
+          value="0"
+          step="1"
+        />
+        <div class="timeline-labels" id="timeline-labels"></div>
+      </div>
+
+      <div class="controls">
+        <span class="keyboard-hint">← → Navigate / ESC Exit</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Version data - add new versions here
+    const versions = [
+      {
+        date: '2025-10-06',
+        title: 'Gacha Added',
+        description: 'First version with gacha functionality',
+        file: '20251006/index.html'
+      },
+      {
+        date: '2026-01-15',
+        title: '3D Sphere Capsules',
+        description: 'Capsules with 3D gradient design',
+        file: '20260115/index.html'
+      },
+      {
+        date: 'Current',
+        title: 'Latest Version',
+        description: 'The current live version',
+        file: '../index.html'
+      }
+    ];
+
+    let currentVersionIndex = versions.length - 1;
+
+    // DOM Elements
+    const slider = document.getElementById('timeline-slider');
+    const currentDateEl = document.getElementById('current-date');
+    const versionTitleEl = document.getElementById('version-title');
+    const timelineLabelsEl = document.getElementById('timeline-labels');
+    const versionPreview = document.getElementById('version-preview');
+    const returnBtn = document.getElementById('return-btn');
+
+    // Initialize timeline
+    function initializeTimeline() {
+      slider.max = versions.length - 1;
+      slider.value = currentVersionIndex;
+
+      // Create labels
+      timelineLabelsEl.innerHTML = '';
+      versions.forEach((version, index) => {
+        const label = document.createElement('span');
+        label.className = 'timeline-label';
+        label.textContent = version.date;
+        label.addEventListener('click', () => {
+          currentVersionIndex = index;
+          slider.value = index;
+          updateVersion(index);
+        });
+        timelineLabelsEl.appendChild(label);
+      });
+
+      updateVersion(currentVersionIndex);
+    }
+
+    // Update displayed version
+    function updateVersion(index) {
+      const version = versions[index];
+
+      currentDateEl.textContent = version.date;
+      versionTitleEl.textContent = version.title;
+
+      // Update active label
+      const labels = timelineLabelsEl.querySelectorAll('.timeline-label');
+      labels.forEach((label, i) => {
+        label.classList.toggle('active', i === index);
+      });
+
+      // Load in iframe
+      versionPreview.classList.remove('loaded');
+      versionPreview.src = version.file;
+      versionPreview.onload = () => {
+        setTimeout(() => {
+          versionPreview.classList.add('loaded');
+        }, 100);
+      };
+    }
+
+    // Event Listeners
+    slider.addEventListener('input', (e) => {
+      currentVersionIndex = parseInt(e.target.value);
+      updateVersion(currentVersionIndex);
+    });
+
+    returnBtn.addEventListener('click', () => {
+      window.location.href = '../index.html';
+    });
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      switch(e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (currentVersionIndex > 0) {
+            currentVersionIndex--;
+            slider.value = currentVersionIndex;
+            updateVersion(currentVersionIndex);
+          }
+          break;
+
+        case 'ArrowRight':
+          e.preventDefault();
+          if (currentVersionIndex < versions.length - 1) {
+            currentVersionIndex++;
+            slider.value = currentVersionIndex;
+            updateVersion(currentVersionIndex);
+          }
+          break;
+
+        case 'Escape':
+          e.preventDefault();
+          window.location.href = '../index.html';
+          break;
+      }
+    });
+
+    // Initialize
+    initializeTimeline();
+  </script>
+</body>
+</html>

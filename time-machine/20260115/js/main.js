@@ -149,28 +149,6 @@ function createPlayer(audioPath) {
   player.className = 'audio-player';
   player.id = 'audio-player-' + capsuleCounter;
 
-  // Create SVG with rotating text (same style as Gacha knob)
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', 'capsule-text-circle');
-  svg.setAttribute('viewBox', '0 0 100 100');
-
-  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('id', 'capsulePath-' + capsuleCounter);
-  path.setAttribute('d', 'M 50, 50 m -42, 0 a 42,42 0 1,1 84,0 a 42,42 0 1,1 -84,0');
-  defs.appendChild(path);
-  svg.appendChild(defs);
-
-  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  const textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
-  textPath.setAttribute('href', '#capsulePath-' + capsuleCounter);
-  textPath.setAttribute('startOffset', '0%');
-  textPath.textContent = '音源•音源•音源•音源•音源•音源•';
-  text.appendChild(textPath);
-  svg.appendChild(text);
-
-  player.appendChild(svg);
-
   const playPauseBtn = document.createElement('button');
   playPauseBtn.className = 'play-pause-btn';
   playPauseBtn.textContent = '▶';
@@ -375,8 +353,8 @@ function positionPlayers() {
     const playerGap = baseGap * 1.5;
     const playersTop = knobBottom + playerGap;
 
-    // Instruction molto più vicina al cerchio
-    const instructionTop = knobBottom + (baseGap * 0.2);
+    // Instruction molto più vicina al cerchio (circa 1/3 del baseGap originale)
+    const instructionTop = knobBottom + (baseGap * 0.5);
 
     if (instruction) {
       instruction.style.top = instructionTop + 'px';
@@ -389,24 +367,15 @@ function positionPlayers() {
     // Imposta il top e distribuisci i player orizzontalmente
     const players = document.querySelectorAll('.audio-player');
 
-    // Calcola la larghezza di un singolo player
-    // Usa getComputedStyle per ottenere la dimensione reale anche su mobile
-    let playerWidth = 56; // default fallback
-    if (players.length > 0) {
-      const computedWidth = parseFloat(getComputedStyle(players[0]).width);
-      if (computedWidth > 0) {
-        playerWidth = computedWidth;
-      }
-    }
+    // Calcola la larghezza di un singolo player (usa il primo player come riferimento)
+    const playerWidth = players.length > 0 ? players[0].offsetWidth : 56;
 
-    // Spazio tra i player - ridotto su mobile per evitare overflow
-    const isMobile = window.innerWidth <= 768;
-    const gap = isMobile ? 12 : 20;
-    const spacing = playerWidth + gap;
-    const totalWidth = (players.length - 1) * spacing + playerWidth;
+    // Spazio tra i player - aumentato per evitare sovrapposizioni
+    const spacing = playerWidth + 20; // 20px di gap tra le sfere
+    const totalWidth = (players.length - 1) * spacing;
 
-    // Centro della finestra - calcolo più preciso
-    const startLeft = (window.innerWidth - totalWidth) / 2;
+    // Centro della finestra meno metà della larghezza del player per centrare il primo
+    const startLeft = (window.innerWidth / 2) - (totalWidth / 2) - (playerWidth / 2);
 
     players.forEach((player, index) => {
       // Imposta il top e left solo se il player non è stato trascinato
@@ -443,7 +412,7 @@ document.addEventListener('keydown', (e) => {
       return;
     }
 
-    // Navigate to Time Machine
-    window.location.href = 'time-machine/index.html';
+    // Navigate to archive page
+    window.location.href = 'archive.html';
   }
 });
